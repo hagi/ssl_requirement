@@ -1,12 +1,15 @@
 Installing
 ==========
 
+This version disables dependency on request.ssl? method for terminated SSL. It uses ssl_request? method which can be
+overwritten in your controller (default: request.ssl?)
+
 This version of SSL Requirement is **only** compatible with Rails 3.x.  To install add the following line to your project's
 `Gemfile`:
 
-    gem 'bartt-ssl_requirement', '~>1.4.0', :require => 'ssl_requirement'
+    gem 'hagi-ssl_requirement', '~>1.4.0', :require => 'ssl_requirement', :git => 'https://github.com/hagi/ssl_requirement'
 
-`bartt-ssl_requirement` is compatible with ruby 1.8.7 and 1.9.x.
+`hagi-ssl_requirement` is compatible with ruby 1.8.7 and 1.9.x.
 
 SSL Requirement
 ===============

@@ -113,6 +113,11 @@ module SslRequirement
     allowed_actions == [:all] || allowed_actions.include?(action_name.to_sym)
   end
 
+  def ssl_request?
+    request.ssl?
+  end
+
+
   # normal ports are the ports used when no port is specified by the user to the browser
   # i.e. 80 if the protocol is http, 443 is the protocol is https
   NORMAL_PORTS = [80, 443]
@@ -121,13 +126,15 @@ module SslRequirement
   def ensure_proper_protocol
     return true if SslRequirement.disable_ssl_check?
 
-    if ssl_required? && !request.ssl?
+    if ssl_required? && !ssl_request?
       redirect_to determine_redirect_url(request, true), :status => (redirect_status || :found)
       flash.keep
       return false
-    elsif request.ssl? && ssl_allowed?
+
+    elsif ssl_request? && ssl_allowed?
       return true
-    elsif request.ssl? && !ssl_required?
+
+    elsif ssl_request? && !ssl_required?
       redirect_to determine_redirect_url(request, false), :status => (redirect_status || :found)
       flash.keep
       return false
@@ -151,21 +158,11 @@ module SslRequirement
   end
 
   def determine_ssl_port_string(request_port)
-    if request_port == non_ssl_port
-      port = ssl_port
-    else
-      port = request_port || ssl_port
-    end
-    determine_port_string port
+    determine_port_string ssl_port
   end
 
   def determine_non_ssl_port_string(request_port)
-    if request_port == ssl_port
-      port = non_ssl_port
-    else
-      port = request_port || non_ssl_port
-    end
-    determine_port_string port
+    determine_port_string non_ssl_port
   end
 
   def self.determine_host(host)
